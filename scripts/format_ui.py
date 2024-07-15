@@ -1,8 +1,8 @@
 import unicodedata
 from text2tags import TaggerLlama
+
 import gradio as gr
 from modules import script_callbacks, scripts, shared
-from modules.processing import StableDiffusionProcessingTxt2Img, StableDiffusionProcessingImg2Img
 
 model = TaggerLlama()
 
@@ -11,9 +11,11 @@ References
 """
 ui_prompts = []
 
+
 """
 Functions
 """
+
 
 def format_prompt(*prompts: list):
     ret = []
@@ -31,29 +33,6 @@ def format_prompt(*prompts: list):
 
     return ret
 
-def process_prompt(prompt):
-    if not prompt or prompt.strip() == "":
-        return ""
-    tags = model.predict_tags(prompt)
-    formatted_tags = ', '.join(tags)
-    return formatted_tags
-
-def hijack_processing():
-    original_txt2img_init = StableDiffusionProcessingTxt2Img.__init__
-    original_img2img_init = StableDiffusionProcessingImg2Img.__init__
-
-    def new_txt2img_init(self, *args, **kwargs):
-        if 'prompt' in kwargs:
-            kwargs['prompt'] = process_prompt(kwargs['prompt'])
-        original_txt2img_init(self, *args, **kwargs)
-
-    def new_img2img_init(self, *args, **kwargs):
-        if 'prompt' in kwargs:
-            kwargs['prompt'] = process_prompt(kwargs['prompt'])
-        original_img2img_init(self, *args, **kwargs)
-
-    StableDiffusionProcessingTxt2Img.__init__ = new_txt2img_init
-    StableDiffusionProcessingImg2Img.__init__ = new_img2img_init
 
 def on_before_component(component: gr.component, **kwargs: dict):
     if "elem_id" in kwargs:
@@ -73,8 +52,6 @@ def on_before_component(component: gr.component, **kwargs: dict):
         return None
     return None
 
-"""
-Register Callbacks
-"""
+
+
 script_callbacks.on_before_component(on_before_component)
-script_callbacks.on_app_started(hijack_processing)
