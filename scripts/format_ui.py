@@ -25,10 +25,11 @@ def format_prompt(*prompts: list):
             ret.append("")
             continue
 
-        prompt = model.predict_tags(prompt)
-        print(prompt)
+        tags = model.predict_tags(prompt)
+        formatted_tags = ', '.join(tags)
+        print(formatted_tags)
 
-        ret.append(prompt)
+        ret.append(formatted_tags)
 
     return ret
 
