@@ -1,5 +1,6 @@
 import unicodedata
 import gradio as gr
+from modules import script_callbacks
 from text2tags import TaggerLlama
 
 model = TaggerLlama()
