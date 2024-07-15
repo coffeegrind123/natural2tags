@@ -1,8 +1,10 @@
 import unicodedata
+from text2tags import TaggerLlama
 
 import gradio as gr
 from modules import script_callbacks, scripts, shared
 
+model = TaggerLlama()
 
 """
 References
